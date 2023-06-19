@@ -8,5 +8,5 @@ response = urllib.request.urlopen(request)
 content = response.read()
 weather_data = json.loads(content)
 
-weather_code = weather_data['forecast']['forecastday'][1]['day']['condition']['code']
-print(weather_code)
+weather_code_tomorrow = weather_data['forecast']['forecastday'][1]['day']['condition']['code']
+print(weather_code_tomorrow)
