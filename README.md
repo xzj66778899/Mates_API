@@ -19,4 +19,14 @@ The ORM also eliminates the SQL injection by the attackers because we no longer 
 
 
 ##R6##
+'picture' done
+
+##R7##
+
+
+##R8##
+
+
+
+
 
