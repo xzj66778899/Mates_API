@@ -26,7 +26,8 @@ def seed_db():
   genders = [
     Gender(name = 'male'),
     Gender(name = 'female'),
-    Gender(name = 'intersex')
+    Gender(name = 'intersex'),
+    Gender(name = 'undifined')
   ]
   db.session.add_all(genders)
   db.session.commit()
@@ -36,7 +37,8 @@ def seed_db():
     first_name = 'Admin',
     password = bcrypt.generate_password_hash('888888').decode('utf8'),
     email = '888888@aaa.com',
-    is_admin = True
+    is_admin = True,
+    gender_id = genders[3].id
     ),
     User(
     first_name = 'James',

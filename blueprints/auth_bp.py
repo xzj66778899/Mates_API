@@ -1,5 +1,6 @@
 from flask import Blueprint, request, abort
 from models.user import User, UserSchema
+from models.gender import Gender
 from init import db, bcrypt
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, get_jwt_identity
@@ -11,6 +12,7 @@ auth_bp = Blueprint('auth', __name__)
 # view all users information
 @auth_bp.route('/users')
 def all_users():
+   admin_required()
    stmt = db.select(User)
    users = db.session.scalars(stmt)
    return UserSchema(many = True, exclude=['password']).dump(users)
@@ -24,9 +26,8 @@ def register():
       first_name = user_info['first_name'],
       last_name = user_info['last_name'],
       email = user_info['email'],
-      phone = user_info['phone'],
-      dob = user_info['dob'],
-      password = bcrypt.generate_password_hash(user_info['password']).decode('utf8')
+      password = bcrypt.generate_password_hash(user_info['password']).decode('utf8'),
+      gender_id = user_info['gender_id']
     )
     db.session.add(user)
     db.session.commit()

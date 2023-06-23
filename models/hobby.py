@@ -12,6 +12,6 @@ class Hobby(db.Model):
     users_have_hobbies = db.relationship('User_has_hobby')
 
 class HobbySchema(ma.Schema):
-    class meta:
-        fields = ('id', 'name')
+    class Meta:
+        fields = ('name',)
 

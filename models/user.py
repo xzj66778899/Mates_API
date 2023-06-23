@@ -20,9 +20,10 @@ class User(db.Model):
 
 
 class UserSchema(ma.Schema):
-    gender = fields.Nested('Gender')
+    gender = fields.Nested('GenderSchema')
 
-    class meta:
-        fields = ('id', 'first_name', 'last_name','email' 'password', 'is_admin', 'gender')
+    class Meta:
+    
+        fields = ('first_name', 'last_name','email', 'password', 'is_admin', 'gender_id')
 
 

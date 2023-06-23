@@ -5,9 +5,19 @@ from models.user_has_hobby import User_has_hobby, User_has_hobbySchema
 from init import db, bcrypt
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from blueprints.auth_bp import admin_required
 
 
 users_have_hobbies_bp = Blueprint('users_have_hobbies',__name__, url_prefix = '/users_have_hobbies')
+
+
+# view all users'hobbies'
+@users_have_hobbies_bp.route('/')
+def all_users():
+  #  admin_required()
+   stmt = db.select(User_has_hobby)
+   users_have_hobbies = db.session.scalars(stmt)
+   return User_has_hobbySchema(many = True).dump(users_have_hobbies)
 
 
 # create a new "user's hobby"

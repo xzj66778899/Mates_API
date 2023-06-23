@@ -7,13 +7,13 @@ class Gender(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable = False, unique=True)
    
 
     users = db.relationship('User', back_populates = 'gender', cascade = 'all,delete')
 
 
 class GenderSchema(ma.Schema):
-    class meta:
-        fields = ('id', 'name')
+    class Meta:
+        fields = ('id','name')
 

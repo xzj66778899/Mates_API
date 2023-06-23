@@ -5,6 +5,7 @@ from blueprints.cli_bp import cli_bp
 from blueprints.auth_bp import auth_bp
 from blueprints.hobbies_bp import hobbies_bp
 from blueprints.users_have_hobbies_bp import users_have_hobbies_bp
+from blueprints.genders_bp import genders_bp
 from marshmallow.exceptions import ValidationError
 def setup():
   app = Flask(__name__)
@@ -32,6 +33,7 @@ def setup():
   app.register_blueprint(users_have_hobbies_bp)
   app.register_blueprint(cli_bp)
   app.register_blueprint(hobbies_bp)
+  app.register_blueprint(genders_bp)
 
   return app
 
