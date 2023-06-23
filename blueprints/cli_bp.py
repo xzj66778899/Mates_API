@@ -19,13 +19,15 @@ def create_db():
 
 @cli_bp.cli.command('seed')
 def seed_db():
+  db.session.query(User_has_hobby).delete()
+  db.session.query(User).delete()
+  db.session.query(Gender).delete()
+
   genders = [
     Gender(name = 'male'),
     Gender(name = 'female'),
     Gender(name = 'intersex')
   ]
-
-  db.session.query(Gender).delete()
   db.session.add_all(genders)
   db.session.commit()
 
@@ -66,7 +68,7 @@ def seed_db():
     ),
   ]
 
-  db.session.query(User).delete()
+
   db.session.add_all(users)
   db.session.commit()
 
@@ -82,6 +84,20 @@ def seed_db():
   db.session.query(Hobby).delete()
   db.session.add_all(hobbies)
   db.session.commit()
+
+  users_have_hobbies = [
+    User_has_hobby(user_id = users[1].id, hobby_id = hobbies[0].id),
+    User_has_hobby(user_id = users[2].id, hobby_id = hobbies[1].id),
+    User_has_hobby(user_id = users[3].id, hobby_id = hobbies[2].id),
+    User_has_hobby(user_id = users[4].id, hobby_id = hobbies[3].id),
+    User_has_hobby(user_id = users[3].id, hobby_id = hobbies[4].id),
+    User_has_hobby(user_id = users[2].id, hobby_id = hobbies[5].id),
+ ]
+
+  
+  db.session.add_all(users_have_hobbies)
+  db.session.commit()
+
 
   print('seeded')
 

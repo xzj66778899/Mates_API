@@ -9,7 +9,7 @@ class Hobby(db.Model):
 
     name = db.Column(db.String, nullable=False)
    
-    users_have_hobbies = db.relationship('User_has_hobby', back_populates = 'hobbies')
+    users_have_hobbies = db.relationship('User_has_hobby')
 
 class HobbySchema(ma.Schema):
     class meta:
