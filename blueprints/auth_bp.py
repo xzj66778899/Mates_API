@@ -37,6 +37,7 @@ def register():
   except IntegrityError:
     return {'error': 'email address is already in use'}, 409
 
+
 @auth_bp.route('/login', methods = ['POST'])
 def login():
     try:
@@ -44,7 +45,7 @@ def login():
       user = db.session.scalar(stmt)
       if user and bcrypt.check_password_hash(user.password, request.json['password']):
           token = create_access_token(identity=user.id, expires_delta=timedelta(days=1))
-          return {'token': token, 'user': UserSchema(exclude=['password']).dump(user)}
+          return {'token': token, 'welcome user': UserSchema(exclude=['password']).dump(user)}
       else:
         return {'error': 'invalid email address or password'}, 401 
     except KeyError:

@@ -18,15 +18,10 @@ def setup():
   jwt.init_app(app)
   bcrypt.init_app(app)
 
-  @app.errorhandler(401)
-  def unauthorized(err):
-    return {'error': 'You must be an admin'}, 401
-  
 
   @app.errorhandler(ValidationError)
   def validation_error(err):
       return {'error':err.__dict__['messages']}, 400
-
 
 
   app.register_blueprint(auth_bp)

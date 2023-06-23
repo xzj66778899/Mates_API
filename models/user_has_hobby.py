@@ -19,6 +19,5 @@ class User_has_hobbySchema(ma.Schema):
     hobbies = fields.Nested('HobbySchema')
 
     class Meta:
-
-        fields = ('users', 'hobbies')
+        fields = ('id','hobby_id','users','hobbies')
 
