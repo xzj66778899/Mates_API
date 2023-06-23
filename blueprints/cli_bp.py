@@ -83,5 +83,5 @@ def seed_db():
   db.session.add_all(hobbies)
   db.session.commit()
 
-
+  print('seeded')
 

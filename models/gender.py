@@ -10,7 +10,7 @@ class Gender(db.Model):
     name = db.Column(db.String, nullable=False)
    
 
-users = db.relationship('User', back_populates = 'gender')
+    users = db.relationship('User', back_populates = 'gender')
 
 
 class GenderSchema(ma.Schema):
