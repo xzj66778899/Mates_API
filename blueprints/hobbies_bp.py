@@ -10,6 +10,15 @@ from blueprints.auth_bp import admin_required
 hobbies_bp = Blueprint('hobbies',__name__, url_prefix = '/hobbies')
 
 
+# view all hobbies
+@hobbies_bp.route('/')
+@jwt_required()
+def all_genders():
+   stmt = db.select(Hobby)
+   genders = db.session.scalars(stmt)
+   return HobbySchema(many = True).dump(genders)
+
+
 # create a new hobby
 @hobbies_bp.route('/', methods = ['POST'])
 @jwt_required()

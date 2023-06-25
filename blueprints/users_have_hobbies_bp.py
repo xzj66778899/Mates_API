@@ -15,13 +15,12 @@ users_have_hobbies_bp = Blueprint('users_have_hobbies',__name__, url_prefix = '/
 @users_have_hobbies_bp.route('/view')
 @jwt_required()
 def view_users_hobbies():
-   admin_required()
    stmt = db.select(User_has_hobby)
    users_have_hobbies = db.session.scalars(stmt)
    return User_has_hobbySchema(many = True).dump(users_have_hobbies)
 
 
-# create a new "user's hobby"
+# create a new "user's hobby" 
 @users_have_hobbies_bp.route('/have', methods = ['POST'])
 @jwt_required()
 def has_hobby():
@@ -37,7 +36,7 @@ def has_hobby():
 
   return User_has_hobbySchema().dump(user_has_hobby), 201
 
-# delete a user's hobby
+# delete a user's hobby (must be owner of admin role)
 @users_have_hobbies_bp.route('/<int:user_has_hobby_id>', methods=['DELETE'])
 @jwt_required()
 def delect_user_has_hobby(user_has_hobby_id):
@@ -47,7 +46,24 @@ def delect_user_has_hobby(user_has_hobby_id):
     admin_or_owner_required(user_has_hobby.user_id)
     db.session.delete(user_has_hobby)
     db.session.commit()
-    return {}, 200
+    return {"You don't have this hobby anymore"}, 200
   else:
     return {'error': 'Item not found'}, 404
   
+
+
+# view users'hobbies'
+@users_have_hobbies_bp.route('/hobby_users/<int:h_id>')
+@jwt_required()
+def view_hobby_users(h_id):
+   hobby_exists = db.session.query(Hobby.query.filter(Hobby.id == h_id).exists()).scalar()
+   if not hobby_exists:
+      return {"message":'This hobby ID not exist.'}
+   
+   stmt = db.select(User_has_hobby).filter_by(hobby_id = h_id)
+   hobby_users = db.session.execute(stmt).scalars().first()
+   if hobby_users is not None:
+      hobby_users_all = db.session.execute(stmt).scalars().all()
+      return User_has_hobbySchema(many = True, exclude = ['hobby_id']).dump(hobby_users_all)
+   else:
+      return{"message":'No one has this hobby yet.'}

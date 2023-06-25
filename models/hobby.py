@@ -13,5 +13,4 @@ class Hobby(db.Model):
 
 class HobbySchema(ma.Schema):
     class Meta:
-        fields = ('name',)
-
+        fields = ('id','name',)
