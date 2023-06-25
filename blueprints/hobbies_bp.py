@@ -47,3 +47,19 @@ def update_card(hobby_id):
     return HobbySchema().dump(hobby)
   else:
     return {'error': 'Hobby not found'}, 404
+  
+
+
+# admin can delete a hobby and related user_has_hobby
+@hobbies_bp.route('/<int:hobby_id>', methods=['DELETE'])
+@jwt_required()
+def delect_card(hobby_id):
+  admin_required()
+  stmt = db.select(Hobby).filter_by(id = hobby_id)
+  hobby = db.session.scalar(stmt)
+  if hobby:
+    db.session.delete(hobby)
+    db.session.commit()
+    return {'message':'Hobby deleted'}, 200
+  else:
+    return {'error': 'Hobby not found'}, 404

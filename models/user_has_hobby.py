@@ -10,7 +10,7 @@ class User_has_hobby(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     users = db.relationship('User', back_populates = 'users_have_hobbies')
 
-    hobby_id = db.Column(db.Integer, db.ForeignKey('hobbies.id'), nullable=False)
+    hobby_id = db.Column(db.Integer, db.ForeignKey('hobbies.id',ondelete='CASCADE'), nullable=False)
     hobbies = db.relationship('Hobby', back_populates = 'users_have_hobbies')
 
 
