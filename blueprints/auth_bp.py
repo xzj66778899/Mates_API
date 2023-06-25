@@ -1,10 +1,10 @@
 from flask import Blueprint, request, abort
 from models.user import User, UserSchema
-from models.gender import Gender
 from init import db, bcrypt
 from sqlalchemy.exc import IntegrityError
-from flask_jwt_extended import create_access_token, get_jwt_identity
+from flask_jwt_extended import create_access_token, get_jwt_identity,jwt_required
 from datetime import timedelta
+
 
 
 auth_bp = Blueprint('auth', __name__)
@@ -47,9 +47,35 @@ def login():
           token = create_access_token(identity=user.id, expires_delta=timedelta(days=1))
           return {'token': token, 'welcome user': UserSchema(exclude=['password']).dump(user)}
       else:
-        return {'error': 'invalid email address or password'}, 401 
+          return {'error': 'invalid email address or password'}, 401 
     except KeyError:
       return {'error': 'Email and password are required'}, 400
+
+
+
+@auth_bp.route('/change_password', methods = ['POST'])
+@jwt_required()
+def change_password():
+   user_id = get_jwt_identity()
+   stmt = db.select(User).filter_by(id = user_id)
+   current_user = db.session.scalar(stmt)
+
+   data = request.get_json()
+
+   old_password = data.get('old_password')
+   new_password = data.get('new_password')
+
+   if old_password is None or new_password is None:
+        return {"message": "Old and new passwords are required."}, 400
+
+   if not bcrypt.check_password_hash(current_user.password, old_password):
+        return {"message": "Old password is incorrect."}, 400
+
+   current_user.password = bcrypt.generate_password_hash(new_password).decode('utf8')
+   db.session.commit()
+
+   return {"message": "Password has been updated successfully."}
+
 
 
 def admin_required():
