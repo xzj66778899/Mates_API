@@ -1,5 +1,7 @@
 from init import db,ma
 from marshmallow import fields
+from marshmallow.validate import Length, OneOf,And,Regexp
+from marshmallow.exceptions import ValidationError
 
 
 class User(db.Model):
@@ -21,8 +23,10 @@ class User(db.Model):
 
 class UserSchema(ma.Schema):
     gender = fields.Nested('GenderSchema', exclude = ['id'])
+    password = fields.String(required=True, validate=Regexp(
+    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',error='Password should contain at least one uppercase letter, one lowercase letter, one digit, one special character and be at least 8 characters long'))
 
     class Meta:
-        fields = ('first_name', 'last_name','email', 'password', 'is_admin','gender')
+        fields = ('first_name', 'last_name','email', 'password', 'is_admin','gender','gender_id')
 
 

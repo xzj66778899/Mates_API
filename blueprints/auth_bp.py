@@ -32,7 +32,7 @@ def register():
     db.session.add(user)
     db.session.commit()
 
-    return UserSchema(exclude = ['password']).dump(user), 201
+    return UserSchema(exclude = ['password','gender_id']).dump(user), 201
   # to avoid duplicated email addresses
   except IntegrityError:
     return {'error': 'email address is already in use'}, 409
