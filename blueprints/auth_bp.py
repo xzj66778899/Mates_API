@@ -4,16 +4,18 @@ from init import db, bcrypt
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, get_jwt_identity,jwt_required
 from datetime import timedelta
-
+from sqlalchemy import not_
 
 
 auth_bp = Blueprint('auth', __name__)
 
 # admin can view all users information
 @auth_bp.route('/users')
+@jwt_required()
 def all_users():
    admin_required()
-   stmt = db.select(User)
+  #  select users except the admin role
+   stmt = db.select(User).where(not_(User.email == '888888@aaa.com'))
    users = db.session.scalars(stmt)
    return UserSchema(many = True, exclude=['password']).dump(users)
 
