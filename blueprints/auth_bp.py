@@ -9,7 +9,7 @@ from datetime import timedelta
 
 auth_bp = Blueprint('auth', __name__)
 
-# view all users information
+# admin can view all users information
 @auth_bp.route('/users')
 def all_users():
    admin_required()
@@ -33,11 +33,12 @@ def register():
     db.session.commit()
 
     return UserSchema(exclude = ['password','gender_id']).dump(user), 201
-  # to avoid duplicated email addresses
+  
   except IntegrityError:
     return {'error': 'email address is already in use'}, 409
 
 
+# user login to get token
 @auth_bp.route('/login', methods = ['POST'])
 def login():
     try:
@@ -52,7 +53,7 @@ def login():
       return {'error': 'Email and password are required'}, 400
 
 
-
+# users can change their own password
 @auth_bp.route('/change_password', methods = ['POST'])
 @jwt_required()
 def change_password():
@@ -78,6 +79,7 @@ def change_password():
 
 
 
+# admin authorization
 def admin_required():
     user_id = get_jwt_identity()
     stmt = db.select(User).filter_by(id=user_id)
@@ -85,7 +87,7 @@ def admin_required():
     if not (user and user.is_admin):
       abort(401, description ='You must be an admin')
 
-
+# admin or owner authorization 
 def admin_or_owner_required(owner_id):
   user_id = get_jwt_identity()
   stmt = db.select(User).filter_by(id=user_id)

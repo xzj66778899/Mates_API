@@ -1,15 +1,13 @@
-from flask import Blueprint, request, abort
-from models.user import User, UserSchema
-from models.hobby import Hobby, HobbySchema
+from flask import Blueprint, request
 from models.gender import Gender, GenderSchema
-from init import db, bcrypt
+from init import db
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import jwt_required
 from blueprints.auth_bp import admin_required
 
 genders_bp = Blueprint('genders',__name__, url_prefix = '/genders')
 
-# view all gender information
+# users can view all gender information
 @genders_bp.route('/')
 @jwt_required()
 def all_genders():
@@ -18,7 +16,7 @@ def all_genders():
    return GenderSchema(many = True).dump(genders)
 
 
-# create a new gender
+# users can create a new gender
 @genders_bp.route('/', methods = ['POST'])
 @jwt_required()
 def create_gender():
@@ -35,7 +33,7 @@ def create_gender():
   return GenderSchema().dump(gender), 201
 
 
-# update a gender
+# admin can edit a gender
 @genders_bp.route('/<int:gender_id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_card(gender_id):

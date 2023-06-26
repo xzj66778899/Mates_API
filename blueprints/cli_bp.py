@@ -4,19 +4,18 @@ from models.hobby import Hobby
 from models.gender import Gender
 from models.user_has_hobby import User_has_hobby
 from init import db, bcrypt
-from datetime import date
-
 
 
 cli_bp = Blueprint('db', __name__)
 
+# create database table
 @cli_bp.cli.command('create')
 def create_db():
   db.drop_all()
-  # drop all the tables
   db.create_all()
   print('Tables created successfully')
 
+# seede database table
 @cli_bp.cli.command('seed')
 def seed_db():
   db.session.query(User_has_hobby).delete()

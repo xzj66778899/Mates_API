@@ -1,8 +1,6 @@
-from flask import Blueprint, request, abort
-from models.user import User, UserSchema
+from flask import Blueprint, request
 from models.hobby import Hobby, HobbySchema
-from init import db, bcrypt
-from sqlalchemy.exc import IntegrityError
+from init import db
 from flask_jwt_extended import jwt_required
 from blueprints.auth_bp import admin_required
 
@@ -10,7 +8,7 @@ from blueprints.auth_bp import admin_required
 hobbies_bp = Blueprint('hobbies',__name__, url_prefix = '/hobbies')
 
 
-# view all hobbies
+# users can view all hobbies
 @hobbies_bp.route('/')
 @jwt_required()
 def all_genders():
@@ -19,7 +17,7 @@ def all_genders():
    return HobbySchema(many = True).dump(genders)
 
 
-# create a new hobby
+# users can create a new hobby
 @hobbies_bp.route('/', methods = ['POST'])
 @jwt_required()
 def create_hobby():
@@ -33,7 +31,7 @@ def create_hobby():
   return HobbySchema().dump(hobby), 201
 
 
-# update a hobby
+# users can update a hobby
 @hobbies_bp.route('/<int:hobby_id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_card(hobby_id):
