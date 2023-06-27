@@ -3,6 +3,7 @@ from models.gender import Gender
 from models.hobby import Hobby
 from models.user import User
 from models.user_has_hobby import User_has_hobby, User_has_hobbySchema
+from sqlalchemy.exc import IntegrityError
 from init import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from blueprints.auth_bp import admin_or_owner_required
@@ -24,17 +25,32 @@ def view_users_hobbies():
 @users_have_hobbies_bp.route('/have', methods = ['POST'])
 @jwt_required()
 def has_hobby():
-  user_has_hobby_info = User_has_hobbySchema().load(request.json)
+  try:
+    # check if the user already has this hobby
+    user_has_hobby_info = User_has_hobbySchema().load(request.json)
 
-  user_has_hobby = User_has_hobby(
-      user_id = get_jwt_identity(),
-      hobby_id = user_has_hobby_info['hobby_id']
-  )
+    user_id = get_jwt_identity()
+    hobby_id = user_has_hobby_info['hobby_id']
+
+    existing_hobby = User_has_hobby.query.filter_by(user_id = user_id, hobby_id = hobby_id).first()
+
+    if existing_hobby:
+        return {"error": "You already has this hobby!"}, 400
     
-  db.session.add(user_has_hobby)
-  db.session.commit()
 
-  return User_has_hobbySchema().dump(user_has_hobby), 201
+    user_has_hobby = User_has_hobby(
+        user_id = get_jwt_identity(),
+        hobby_id = user_has_hobby_info['hobby_id']
+    )
+      
+    db.session.add(user_has_hobby)
+    db.session.commit()
+
+    return User_has_hobbySchema(exclude = ["hobby_id"]).dump(user_has_hobby)
+  except IntegrityError:
+    return {"error":"This hobby_id doesn't exist, please select another one."},400
+
+
 
 #admin or owner can delete a user's hobby
 @users_have_hobbies_bp.route('/<int:user_has_hobby_id>', methods=['DELETE'])

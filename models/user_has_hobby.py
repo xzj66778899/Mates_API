@@ -15,7 +15,7 @@ class User_has_hobby(db.Model):
 
 
 class User_has_hobbySchema(ma.Schema):
-    users = fields.Nested('UserSchema', exclude = ['password', 'is_admin'])
+    users = fields.Nested('UserSchema', exclude = ['password', 'is_admin','email','gender','gender_id'])
     hobbies = fields.Nested('HobbySchema')
 
     class Meta:

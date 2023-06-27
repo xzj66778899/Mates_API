@@ -31,7 +31,7 @@ def create_hobby():
   return HobbySchema().dump(hobby), 201
 
 
-# users can update a hobby
+# admins can edit a hobby
 @hobbies_bp.route('/<int:hobby_id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_card(hobby_id):
