@@ -26,7 +26,7 @@ def seed_db():
     Gender(name = 'male'),
     Gender(name = 'female'),
     Gender(name = 'intersex'),
-    Gender(name = 'undifined')
+    Gender(name = 'unidentified')
   ]
   db.session.add_all(genders)
   db.session.commit()

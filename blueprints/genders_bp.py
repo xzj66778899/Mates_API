@@ -1,9 +1,10 @@
 from flask import Blueprint, request
 from models.gender import Gender, GenderSchema
+from models.user import User, UserSchema
 from init import db
 from sqlalchemy.exc import IntegrityError
-from flask_jwt_extended import jwt_required
-from blueprints.auth_bp import admin_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from blueprints.auth_bp import admin_required,admin_or_owner_required
 
 genders_bp = Blueprint('genders',__name__, url_prefix = '/genders')
 
@@ -33,7 +34,21 @@ def create_gender():
   return GenderSchema().dump(gender), 201
 
 
-# admin can edit a gender
+# users can edit their gender
+@genders_bp.route('/my_gender/', methods=['PUT', 'PATCH'])
+@jwt_required()
+def change_gender():
+  stmt = db.select(User).filter_by(id = get_jwt_identity())
+  user = db.session.scalar(stmt)
+  try:
+    user.gender_id = request.json.get('gender_id')
+    db.session.commit()
+    return UserSchema().dump(user)
+  except IntegrityError:
+    return {'error': 'Gender_id not exist'}, 400
+
+
+# admin can edit a gender's name
 @genders_bp.route('/<int:gender_id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_card(gender_id):
