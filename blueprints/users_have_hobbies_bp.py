@@ -21,12 +21,21 @@ def view_users_hobbies():
    return User_has_hobbySchema(many = True).dump(users_have_hobbies)
 
 
+# users can view their own hobbies/
+@users_have_hobbies_bp.route('/mine')
+@jwt_required()
+def view_my_hobbies():
+   stmt = db.select(User_has_hobby).filter_by(user_id = get_jwt_identity())
+   users_have_hobbies = db.session.scalars(stmt)
+   return User_has_hobbySchema(many = True).dump(users_have_hobbies)
+   
+
 # users can link them to a new hobby
 @users_have_hobbies_bp.route('/have', methods = ['POST'])
 @jwt_required()
 def has_hobby():
   try:
-    # check if the user already has this hobby
+    # check if the user already has this hobby, also prevent dupulicated row in the database
     user_has_hobby_info = User_has_hobbySchema().load(request.json)
 
     user_id = get_jwt_identity()
@@ -49,7 +58,6 @@ def has_hobby():
     return User_has_hobbySchema(exclude = ["hobby_id"]).dump(user_has_hobby)
   except IntegrityError:
     return {"error":"This hobby_id doesn't exist, please select another one."},400
-
 
 
 #admin or owner can delete a user's hobby
@@ -83,7 +91,6 @@ def view_hobby_users(h_id):
    else:
       return{"message":'No one has this hobby yet.'}
    
-
 
 # users can view all the hobbies that one particluar gender have
 @users_have_hobbies_bp.route('/hobby_genders/<int:g_id>')
