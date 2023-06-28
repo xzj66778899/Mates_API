@@ -30,7 +30,7 @@ def create_hobby():
     db.session.commit()
 
   except IntegrityError:
-    return {'error': 'hobby is already exist'}, 409
+    return {'error': 'hobby already exists'}, 409
 
   return HobbySchema().dump(hobby), 201
 
@@ -44,11 +44,11 @@ def update_card(hobby_id):
   hobby = db.session.scalar(stmt)
   hobby_info = HobbySchema().load(request.json)
   if hobby:
-    hobby.name = hobby_info.get('name',hobby.name)
+    hobby.name = hobby_info.get('name',hobby.name).lower()
     db.session.commit()
     return HobbySchema().dump(hobby)
   else:
-    return {'error': 'Hobby not found'}, 404
+    return {'error': 'hobby_id not found'}, 404
   
 
 
@@ -64,4 +64,4 @@ def delect_card(hobby_id):
     db.session.commit()
     return {'message':'Hobby deleted'}, 200
   else:
-    return {'error': 'Hobby not found'}, 404
+    return {'error': 'hobby_id not found'}, 404

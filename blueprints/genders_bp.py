@@ -28,7 +28,7 @@ def create_gender():
     db.session.add(gender)
     db.session.commit() 
   except IntegrityError:
-    return {'error': 'gender is already exist'}, 409
+    return {'error': 'gender already exists'}, 409
 
   return GenderSchema().dump(gender), 201
 
@@ -44,7 +44,7 @@ def change_gender():
     db.session.commit()
     return UserSchema(exclude=['password']).dump(user)
   except IntegrityError:
-    return {'error': 'Gender_id not exist'}, 400
+    return {'error': 'gender_id not exist'}, 400
 
 
 # admin can edit a gender

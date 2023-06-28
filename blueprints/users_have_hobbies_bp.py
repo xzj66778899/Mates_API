@@ -70,7 +70,7 @@ def delect_user_has_hobby(user_has_hobby_id):
     admin_or_owner_required(user_has_hobby.user_id)
     db.session.delete(user_has_hobby)
     db.session.commit()
-    return {"You don't have this hobby anymore"}, 200
+    return {'message': "You don't have this hobby anymore"}, 200
   else:
     return {'error': 'Item not found'}, 404
   
@@ -81,7 +81,7 @@ def delect_user_has_hobby(user_has_hobby_id):
 def view_hobby_users(h_id):
    hobby_exists = db.session.query(Hobby.query.filter(Hobby.id == h_id).exists()).scalar()
    if not hobby_exists:
-      return {"message":'This hobby ID not exist.'}
+      return {"error":"This hobby_id doesn't exist."}
    
    stmt = db.select(User_has_hobby).filter_by(hobby_id = h_id)
    hobby_users = db.session.execute(stmt).scalars().first()
@@ -98,12 +98,12 @@ def view_hobby_users(h_id):
 def view_hobby_genders(g_id):
    gender_exists = db.session.query(Gender.query.filter(Gender.id == g_id).exists()).scalar()
    if not gender_exists:
-      return {"message":'This gender ID not exist.'}
+      return {"message":"This gender_id doesn't exist."}
 
    stmt = db.select(User).filter_by(gender_id = g_id)
    gender_users = db.session.execute(stmt).scalars().all()
 
-   if gender_users is not None:
+   if gender_users:
       hobbies = []
       for user in gender_users:
          hobby_stmt = db.select(User_has_hobby).filter_by(user_id = user.id)
