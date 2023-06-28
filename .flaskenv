@@ -1,3 +1,3 @@
 FLASK_DEBUG=1
-FLASK_APP = main:setup
+FLASK_APP = src/main:setup
 FLASK_RUN_PORT=5000
