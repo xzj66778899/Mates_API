@@ -1,5 +1,6 @@
 from flask import Blueprint, request, abort
 from models.user import User, UserSchema
+from models.gender import Gender
 from init import db, bcrypt
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, get_jwt_identity,jwt_required
@@ -22,24 +23,32 @@ def all_users():
 
 @auth_bp.route('/register', methods = ['POST'])
 def register():
-  try:
-    user_info = UserSchema().load(request.json)
-    user = User(
-      first_name = user_info['first_name'],
-      last_name = user_info['last_name'],
-      email = user_info['email'],
-      password = bcrypt.generate_password_hash(user_info['password']).decode('utf8'),
-      gender_id = user_info['gender_id']
-    )
-    db.session.add(user)
-    db.session.commit()
-
-    return UserSchema(exclude = ['password','gender_id']).dump(user), 201
   
-  except IntegrityError:
+  user_info = UserSchema().load(request.json)
+  g_id = user_info['gender_id']
+  confirm_gender_exist = Gender.query.filter_by(id = g_id).first()
+  e = user_info['email']
+  email_taken = User.query.filter_by(email = e).first()
+
+  if email_taken:
     return {'error': 'email address is already in use'}, 409
 
+  if not confirm_gender_exist:
+    return {'error': "This gender_id doesn't exist, please view gender and select another."},400
 
+  user = User(
+    first_name = user_info['first_name'],
+    last_name = user_info['last_name'],
+    email = user_info['email'],
+    password = bcrypt.generate_password_hash(user_info['password']).decode('utf8'),
+    gender_id = user_info['gender_id']
+  )
+  db.session.add(user)
+  db.session.commit()
+
+  return UserSchema(exclude = ['password','gender_id']).dump(user), 201
+    
+   
 # user login to get token
 @auth_bp.route('/login', methods = ['POST'])
 def login():

@@ -4,7 +4,7 @@
 This API allows people to query the information about personal hobbies from the database by choosing different categories. 
 
 ##R2##
-By using this API with our database, people can find those who share same hobbies with them, which can be further used to build interest group online, or combined with location services to schedule offline avtivities.
+By using this API with our database, people can find those who share same hobbies with them, which can be further used to build online interest group, or combined with location services to gather offline avtivities.
 
 ##R3##
 PostgreSQL database was used to structure the data and inentify the relationship among them. As the API functions mainly show the hobbies users share with, so a relational database is suitable for that purpose because the entities are interconnected, and by normalizing the data the database can help to ensure data consistency, thus finding and sorting the data is the advantage of the relational database.
