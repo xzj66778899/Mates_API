@@ -24,6 +24,10 @@ def setup():
       return {'error':err.__dict__['messages']}, 400
 
 
+  @app.errorhandler(401)
+  def unauthorized(err):
+      return {'error': str(err)}, 401
+
   app.register_blueprint(auth_bp)
   app.register_blueprint(users_have_hobbies_bp)
   app.register_blueprint(cli_bp)

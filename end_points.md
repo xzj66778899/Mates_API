@@ -1,62 +1,41 @@
 ## Auth Routes
 
-### /auth/register/
+### /register/
 
 #### Methods: POST  
 
 - Arguments: None  
 - Description: Creates a new user in the database  
 - Authentication: none
-- Headers-Authorization: Bearer {Token}- Anyone can register as a new user, the default is_admin value is false. 
+- Headers-Authorization: Anyone can register as a new user, the default is_admin value is false. 
+<br>
+<br>
 
 - Request Body:
 
 ```JSON
-{   "complex_number": 14,
-    "street_number": 20,
-    "street_name": "Captain Road",
-    "suburb": "West End",
-    "postcode": 4006,
-    "users": [{
-        "title": "Ms",
-        "first_name": "Rachael",
-        "middle_name": "Anne",
-        "last_name": "Cook",
-        "password": "hamAnd335*",
-        "email": "test.coggfg4hhttt@bgbc.edu.au",
-        "phone": "0414563531",
-        "dob": "1980-09-02",
-        "gender": "female"
-    }]
+{     
+    "first_name":"Nick",
+    "last_name":"Liu",
+    "email":"000000@aaa.com",
+    "password":"123Abc!!",
+    "gender_id":"1"
 }
 ```
 
 - Request response:
 
  ```JSON
-  {
 {
+    "email": "000000@aaa.com",
+    "first_name": "Nick",
+    "gender": {
+        "name": "male"
+    },
     "id": 7,
-    "title": "Ms",
-    "first_name": "Rachael",
-    "middle_name": "Anne",
-    "last_name": "Cook",
-    "email": "test.coggfg4hhttt@bgbc.edu.au",
-    "phone": "0414563531",
-    "dob": "1980-09-02",
-    "gender": "female",
-    "type": "Student",
-    "address": {
-        "id": 6,
-        "complex_number": 14,
-        "street_number": 20,
-        "street_name": "Captain Road",
-        "suburb": "West End",
-        "postcode": 4006
-    }
+    "last_name": "Liu"
 }
-    }
-
+```
 
 If password not meet the requirements:  
 
@@ -75,5 +54,399 @@ If email already taken by another user:
 ```JSON
 {
     "error": "email address is already in use"
+}
+```
+
+If gender_id not in the database:
+```JSON
+{
+    "error": "This gender_id doesn't exist, please view gender and select another."
+}
+```
+
+### /login/
+
+#### Methods: POST  
+
+- Arguments: None
+- Description: user login and receive token
+- Authentication: none
+- Headers-Authorization: none
+<br>
+<br>
+
+- Request Body:
+
+```JSON
+{     
+    "email":"123456@aaa.com",
+    "password":"123456"
+}
+```
+
+- Request response:
+
+ ```JSON
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4NzkxODkyNCwianRpIjoiOGI2NmFiYmItMmRiOC00ODM3LTg5MGItZjM0MjNjNWJlNTA1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjg3OTE4OTI0LCJleHAiOjE2ODgwMDUzMjR9.mlApW0R2QUuGIVA-1Cfkz7uxkr5If54HotG_IQgqd7M",
+    "welcome user": {
+        "email": "123456@aaa.com",
+        "first_name": "James",
+        "gender": {
+            "name": "male"
+        },
+        "gender_id": 1,
+        "id": 2,
+        "last_name": "Bond"
+    }
+}
+```
+
+If email or password not correct:
+```JSON
+{
+    "error": "invalid email address or password"
+}
+```
+If email or password not provided:
+```JSON
+{
+    "error": "Email and password are required"
+}
+```
+
+### /change_password/
+
+#### Methods: POST  
+
+- Arguments: None
+- Description: user change the password
+- Authentication: @jwt_required()
+- Headers-Authorization: The Bear Token got when login
+<br>
+<br>
+
+- Request Body:
+
+```JSON   
+{
+    "old_password":"123456",
+    "new_password":"123Cba!!!"
+}
+```
+
+- Request response:
+
+ ```JSON
+{
+    "error": "Password has been updated successfully."
+}
+```
+
+If old password not correct:
+```JSON
+{
+    "error": "Old password is incorrect."
+}
+```
+
+If old or new password are not provided:
+```JSON
+{
+    "error": "Old and new passwords are required."
+}
+```
+
+### /users/
+
+#### Methods: GET
+
+- Arguments: None
+- Description: Admin can access all users information
+- Authentication: @jwt_required()
+- Headers-Authorization: Only admin Bear Token valid
+- Request Body: None
+
+- Request response:
+
+ ```JSON
+[
+    {
+        "email": "654321@aaa.com",
+        "first_name": "Jason",
+        "gender": {
+            "name": "male"
+        },
+        "gender_id": 1,
+        "id": 3,
+        "last_name": "Bourne"
+    },
+    {
+        "email": "222222@aaa.com",
+        "first_name": "Alice",
+        "gender": {
+            "name": "female"
+        },
+        "gender_id": 2,
+        "id": 4,
+        "last_name": "Abernathy"
+    },
+    {
+        "email": "333333@aaa.com",
+        "first_name": "Morgan",
+        "gender": {
+            "name": "intersex"
+        },
+        "gender_id": 3,
+        "id": 5,
+        "last_name": "Carpenter"
+    }
+]
+```
+
+If unauthorized:
+```JSON
+{
+    "error": "401 Unauthorized: You must be an admin"
+}
+```
+
+
+## Genders Routes
+### /genders/
+
+#### Methods: GET 
+
+- Arguments: None  
+- Description: view all gender object 
+- Authentication: none
+- Headers-Authorization: None. Anyone can view existing gender objects.
+- Request Body:None
+
+
+- Request response:
+
+ ```JSON
+[
+    {
+        "id": 1,
+        "name": "male"
+    },
+    {
+        "id": 2,
+        "name": "female"
+    },
+    {
+        "id": 3,
+        "name": "intersex"
+    },
+    {
+        "id": 4,
+        "name": "unidentified"
+    }
+]
+```
+
+If password not meet the requirements:  
+
+```JSON
+{
+    "error": {
+        "password": [
+            "Password should contain at least one uppercase letter, one lowercase letter, one digit, one special character and be at least 8 characters long"
+        ]
+    }
+}
+```
+
+### /genders/
+
+#### Methods: POST
+
+- Arguments: None  
+- Description: view all gender object 
+- Authentication: @jwt_required()
+- Headers-Authorization: The user's Bear Token
+<br>
+<br>
+- Request Body:
+```JSON
+{
+    "name":"unisex"
+}
+```
+
+
+- Request response:
+
+ ```JSON
+{
+    "id": 6,
+    "name": "unisex"
+}
+```
+
+If the gender already exist in database:  
+
+```JSON
+{
+    "error": "gender is already exist"
+}
+```
+
+### /genders/my_gender
+
+#### Methods: PUT,PATCH
+
+- Arguments: None  
+- Description: users edit their gender
+- Authentication: @jwt_required()
+- Headers-Authorization: The user's Bear Token
+<br>
+<br>
+
+- Request Body:
+```JSON
+{
+    "gender_id":"6"
+}
+
+```
+
+
+- Request response:
+
+ ```JSON
+{
+    "email": "123456@aaa.com",
+    "first_name": "James",
+    "gender": {
+        "name": "unisex"
+    },
+    "gender_id": 6,
+    "id": 2,
+    "last_name": "Bond"
+}
+```
+
+If the gender_id doesn't exist in database:  
+
+```JSON
+{
+    "error": "Gender_id not exist"
+}
+```
+
+### /genders/\<int:gender_id\>
+
+#### Methods: PUT,PATCH
+
+- Arguments: gender_id 
+- Description: admin can edit gender name
+- Authentication: @jwt_required()
+- Headers-Authorization: The admin's Bear Token
+<br>
+<br>
+
+- Request Body:
+```JSON
+{
+    "name":"changed"
+}
+```
+
+- Request response:
+
+ ```JSON
+{
+    "id": 6,
+    "name": "changed"
+}
+```
+
+If the gender_id doesn't exist in database:  
+
+```JSON
+{
+    "error": "Gender not found"
+}
+```
+
+## Hobbies Routes
+### /hobbies/
+
+#### Methods: GET 
+
+- Arguments: None  
+- Description: view all gender object 
+- Authentication: none
+- Headers-Authorization: None. Anyone can view existing hobby objects.
+- Request Body:None
+
+
+- Request response:
+
+ ```JSON
+[
+    {
+        "id": 1,
+        "name": "basketball"
+    },
+    {
+        "id": 2,
+        "name": "football"
+    },
+    {
+        "id": 3,
+        "name": "tennis"
+    },
+    {
+        "id": 4,
+        "name": "borad game"
+    }
+]
+```
+
+If password not meet the requirements:  
+
+```JSON
+{
+    "error": {
+        "password": [
+            "Password should contain at least one uppercase letter, one lowercase letter, one digit, one special character and be at least 8 characters long"
+        ]
+    }
+}
+```
+
+
+### /hobbies/
+
+#### Methods: POST
+
+- Arguments: None  
+- Description: view all gender object 
+- Authentication: none
+- Headers-Authorization: @jwt_required()
+- Request Body:
+```JSON
+{
+    "name":"coding"
+}
+```
+- Request response:
+
+ ```JSON
+{
+    "id": 7,
+    "name": "coding"
+}
+```
+
+If hobby already exists in database:  
+
+```JSON
+{
+    "error": "hobby is already exist"
 }
 ```

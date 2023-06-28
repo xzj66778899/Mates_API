@@ -10,7 +10,6 @@ genders_bp = Blueprint('genders',__name__, url_prefix = '/genders')
 
 # users can view all gender information
 @genders_bp.route('/')
-@jwt_required()
 def all_genders():
    stmt = db.select(Gender)
    genders = db.session.scalars(stmt)
@@ -29,7 +28,7 @@ def create_gender():
     db.session.add(gender)
     db.session.commit() 
   except IntegrityError:
-    return {'error': 'gender is already exist, please view and choose gender_id directly'}, 409
+    return {'error': 'gender is already exist'}, 409
 
   return GenderSchema().dump(gender), 201
 
@@ -43,7 +42,7 @@ def change_gender():
   try:
     user.gender_id = request.json.get('gender_id')
     db.session.commit()
-    return UserSchema(exclude=['password','is_admin']).dump(user)
+    return UserSchema(exclude=['password']).dump(user)
   except IntegrityError:
     return {'error': 'Gender_id not exist'}, 400
 

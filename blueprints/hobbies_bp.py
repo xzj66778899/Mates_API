@@ -3,7 +3,7 @@ from models.hobby import Hobby, HobbySchema
 from init import db
 from flask_jwt_extended import jwt_required
 from blueprints.auth_bp import admin_required
-
+from sqlalchemy.exc import IntegrityError
 
 hobbies_bp = Blueprint('hobbies',__name__, url_prefix = '/hobbies')
 
@@ -21,12 +21,16 @@ def all_genders():
 @hobbies_bp.route('/', methods = ['POST'])
 @jwt_required()
 def create_hobby():
-  hobby_info = HobbySchema().load(request.json)
-  hobby = Hobby(
-    name = hobby_info['name'].lower(),         
-  )
-  db.session.add(hobby)
-  db.session.commit()
+  try:
+    hobby_info = HobbySchema().load(request.json)
+    hobby = Hobby(
+      name = hobby_info['name'].lower(),         
+    )
+    db.session.add(hobby)
+    db.session.commit()
+
+  except IntegrityError:
+    return {'error': 'hobby is already exist'}, 409
 
   return HobbySchema().dump(hobby), 201
 

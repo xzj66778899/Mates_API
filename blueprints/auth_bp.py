@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import create_access_token, get_jwt_identity,jwt_required
 from datetime import timedelta
 from sqlalchemy import not_
-
+from marshmallow.validate import ValidationError, Regexp
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -16,7 +16,7 @@ auth_bp = Blueprint('auth', __name__)
 def all_users():
    admin_required()
   #  select users except the admin role
-   stmt = db.select(User).where(not_(User.email == '888888@aaa.com'))
+   stmt = db.select(User).where(not_(User.first_name == 'Admin'))
    users = db.session.scalars(stmt)
    return UserSchema(many = True, exclude=['password']).dump(users)
 
@@ -78,10 +78,21 @@ def change_password():
    new_password = data.get('new_password')
 
    if old_password is None or new_password is None:
-        return {"message": "Old and new passwords are required."}, 400
-
+        return {"error": "Old and new passwords are required."}, 400
+   
    if not bcrypt.check_password_hash(current_user.password, old_password):
-        return {"message": "Old password is incorrect."}, 400
+        return {"error": "Old password is incorrect."}, 400
+
+   password_validator = Regexp(
+        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+        error='Password should contain at least one uppercase letter, one lowercase letter, one digit, one special character and be at least 8 characters long'
+    )
+
+   try:
+       password_validator(new_password)
+   except ValidationError as err:
+       return {"error": err.messages[0]}, 400
+   
 
    current_user.password = bcrypt.generate_password_hash(new_password).decode('utf8')
    db.session.commit()
