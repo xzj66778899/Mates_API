@@ -1,13 +1,33 @@
-# ZhongjianXu_T2A2
+# ZhongjianXu_T2A2 - Mates API Web Application
 
-
-
-
+[**GitHub Repository Link**](https://github.com/xzj66778899/Mates_API)  
+***
 
 
 ## Installation and Setup<br>
+Set up database and JWT secret key:
+1. install PostgreSQL in your computer
+2. create  database named 'Mates'
+3. write the database url into .env file
+4. write your JWT_SECRET_KEY into .env file
 
+Run the commands:
+```Python
+# Create virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
 
+# Install pip packages
+pip3 install -r src/requirements.txt
+
+# Insert data into database
+flask db create
+flask db seed
+
+# Run the application
+flask run
+```
+***
 ## Table of Contents
 
 - [R1](#r1)
@@ -20,7 +40,7 @@
 - [R8](#r8)
 - [R9](#r9)
 - [R10](#r10)
-
+***
 ## __R1__ 
 <a name="r1"></a>
 This API allows people to query the information about personal hobbies from the database by choosing different categories. 
@@ -76,7 +96,7 @@ This model represents the table users in the database, which has a primary key '
 
 The 'email' works as an unique element to identify a user, so it set to be 'unique = True'.<br>
 
-The'is_admin' set as 'default = False' means that the user normally registered as non-admin, but this function need to be improved later to prevent user registered as an admin wuthout authorization.
+The 'is_admin' is set to 'default = False' which means that the user is normally registered as non-admin. This function needs to be improved later to prevent users from registering as an admin without authorization.
 
 ```PYTHON
 class User(db.Model):
@@ -108,7 +128,7 @@ class UserSchema(ma.Schema):
 __Model gender__: <br>
 This model represents table 'genders' in the database that has a primary key 'id' and column 'name'. It has been set relationship to 'users' model.
 
-The 'name' column must be unique to prevent duplicated columns.
+The 'name' column must be unique to prevent duplicated rows.
 
 ```PYTHON
 class Gender(db.Model):
@@ -128,9 +148,9 @@ class GenderSchema(ma.Schema):
 ```
 
 __Model hobby__: <br>
-This model represents table 'hobbies' in the database that has a primary key 'id' and column 'name'. This model also links to 'users_have_hobbies', and if the 'hobby' is deleted, the 'user_has_hobby' also be deleted so it set a "csscade = 'all,delete'" on it.
+This model represents table 'hobbies' in the database that has a primary key 'id' and 'name' column. This model also links to 'users_have_hobbies'. If a 'hobby' is deleted, the associated 'user_has_hobby' will also be deleted, so it is set to "cascade = 'all,delete.
 
-The 'name' column must be unique to prevent duplicated columns.
+The 'name' column must be unique to prevent duplicated rows.
 
 
 ```PYTHON
@@ -178,12 +198,12 @@ class User_has_hobbySchema(ma.Schema):
 The __'user'__ model contains users information and is the child object of __'gender'__, because one user only has one gender while one gender can belong to multipul users, which has a 'one to many' relationship between them. <br>
 
 The __'user'__ model also has a relationship with __'hobby'__ model that one user can have many hobbies and one hobby can belong to multipul users. <br>
-This 'many to many' relationship is bridged by the __'user_has_hobby'__ connecting model which only contains the primary keys of both parties and store the relations of them. If one of the party is deleted, the connecting object will be deleted as well by cascad deleting.
+This 'many to many' relationship is bridged by the __'user_has_hobby'__ connecting model which only contains the primary keys of both parties and stores the relations between them. If one of the party is deleted, the connecting object will also be deleted by cascad deleting.
 
 ## __R10__ 
 <a name="r10"></a>
-For this projects, I devided it into three parts:'planning, coding and documentation'.
-The planning process including:<br>
+For this project, I devided it into three parts:'planning, coding and documentation'.
+The planning process includes:<br>
 1. User stories: What is the scope of this project.<br>
    Tools: Word
 2. ERD drawing: What are the entities and relationships of this project.<br>
@@ -194,4 +214,4 @@ The planning process including:<br>
 
 For the project management tool, Trello is used to manage the process. 
 [click here for Trello](https://trello.com/invite/b/Cc3QyvmU/ATTIe97faff0535786514465d41b90046bff49B86687/assignment-t2a2)<br>
-The scope was defined at the beginning of the project, then in the middle of the project I decided to add more features on it, which formed an Agile method. As the main features still function, the added features can be worked independently. For example, if there are two developers, one works on the main features to ensure project deliverable and the other can work on a seperate branch.
+The scope was defined at the beginning of the project. Later in the middle of the project I decided to add more features on it, which formed an Agile method. As the main features still function, the added features can be worked independently. For example, if there are two developers, one works on the main features to ensure project deliverable and the other can work on a seperate branch.
