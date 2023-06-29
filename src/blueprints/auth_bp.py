@@ -14,7 +14,7 @@ auth_bp = Blueprint('auth', __name__)
 @jwt_required()
 def all_users():
    admin_required()
-  #  select users except the admin role
+  #  select users from User except the admin role
    stmt = db.select(User).where(not_(User.first_name == 'Admin'))
    users = db.session.scalars(stmt)
    return UserSchema(many = True, exclude=['password']).dump(users)
@@ -22,16 +22,22 @@ def all_users():
 
 @auth_bp.route('/register', methods = ['POST'])
 def register():
-  
+  # Use Marshmallow to get the info from posted data
   user_info = UserSchema().load(request.json)
+  # assign the gender info to variable
   g_id = user_info['gender_id']
+  # select the first item from Gender that matches the loaded gender
   confirm_gender_exist = Gender.query.filter_by(id = g_id).first()
+  # assign the email info to variable
   e = user_info['email']
+  # select the first item from User that has the email loaded
   email_taken = User.query.filter_by(email = e).first()
 
+  # if there is an email matched in database
   if email_taken:
     return {'error': 'email address is already in use'}, 409
 
+  # if no such gender in database
   if not confirm_gender_exist:
     return {'error': "This gender_id doesn't exist, please view gender and select another."},400
 
@@ -52,8 +58,10 @@ def register():
 @auth_bp.route('/login', methods = ['POST'])
 def login():
     try:
+      # select the user has the loaded email
       stmt = db.select(User).filter_by(email=request.json['email'])
       user = db.session.scalar(stmt)
+      # check the hashing password by using bcrypy function
       if user and bcrypt.check_password_hash(user.password, request.json['password']):
           token = create_access_token(identity=user.id, expires_delta=timedelta(days=1))
           return {'token': token, 'welcome user': UserSchema(exclude=['password']).dump(user)}
@@ -68,6 +76,7 @@ def login():
 @jwt_required()
 def change_password():
    user_id = get_jwt_identity()
+  #  select the user with id 
    stmt = db.select(User).filter_by(id = user_id)
    current_user = db.session.scalar(stmt)
 
@@ -92,7 +101,7 @@ def change_password():
    except ValidationError as err:
        return {"error": err.messages[0]}, 400
    
-
+  # assgin a new value to the 'password' column of the selected user 
    current_user.password = bcrypt.generate_password_hash(new_password).decode('utf8')
    db.session.commit()
 

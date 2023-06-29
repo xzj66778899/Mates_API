@@ -1,17 +1,24 @@
 # ZhongjianXu_T2A2
 
+
+
+
+
+
+## Installation and Setup<br>
+
 ## Table of Contents
 
-1. [R1](#r1)
-2. [R2](#r2)
-3. [R3](#r3)
-4. [R4](#r4)
-5. [R5](#r5)
-6. [R6](#r6)
-7. [R7](#r7)
-8. [R8](#r8)
-9. [R9](#r9)
-10. [R10](#r10)
+- [R1](#r1)
+- [R2](#r2)
+- [R3](#r3)
+- [R4](#r4)
+- [R5](#r5)
+- [R6](#r6)
+- [R7](#r7)
+- [R8](#r8)
+- [R9](#r9)
+- [R10](#r10)
 
 ## __R1__ 
 <a name="r1"></a>
@@ -174,3 +181,16 @@ This 'many to many' relationship is bridged by the __'user_has_hobby'__ connecti
 
 ## __R10__ 
 <a name="r10"></a>
+For this projects, I devided it into three parts:'planning, coding and documentation'.
+The planning process including:<br>
+1. User stories: What is the scope of this project.<br>
+   Tools: Word
+2. ERD drawing: What are the entities and relationships of this project.<br>
+        Tools: Lucid Drawing to draw the ERD
+        ![Lucid](/docs/Lucid.png)
+3. Documentation : Complete the rest of the REQUIREMENTS.<br>
+        Tools: README.md
+
+For the project management tool, Trello is used to manage the process. 
+[click here for Trello](https://trello.com/invite/b/Cc3QyvmU/ATTIe97faff0535786514465d41b90046bff49B86687/assignment-t2a2)<br>
+The scope was defined at the beginning of the project, then in the middle of the project I decided to add more features on it, which formed an Agile method. 

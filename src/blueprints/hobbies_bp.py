@@ -12,6 +12,7 @@ hobbies_bp = Blueprint('hobbies',__name__, url_prefix = '/hobbies')
 @hobbies_bp.route('/')
 @jwt_required()
 def all_genders():
+  #  select all items in hobbies table
    stmt = db.select(Hobby)
    genders = db.session.scalars(stmt)
    return HobbySchema(many = True).dump(genders)
@@ -22,7 +23,9 @@ def all_genders():
 @jwt_required()
 def create_hobby():
   try:
+    # use Marshmallow to load the data
     hobby_info = HobbySchema().load(request.json)
+    # assgin the loaded value to the 'name' column of the 'hobbies' table
     hobby = Hobby(
       name = hobby_info['name'].lower(),         
     )
@@ -40,6 +43,7 @@ def create_hobby():
 @jwt_required()
 def update_card(hobby_id):
   admin_required()
+  # select the hobby with loaded id then assign new value to it
   stmt = db.select(Hobby).filter_by(id = hobby_id)
   hobby = db.session.scalar(stmt)
   hobby_info = HobbySchema().load(request.json)
@@ -57,6 +61,7 @@ def update_card(hobby_id):
 @jwt_required()
 def delect_card(hobby_id):
   admin_required()
+  # select the hobby with loaded id then delete it
   stmt = db.select(Hobby).filter_by(id = hobby_id)
   hobby = db.session.scalar(stmt)
   if hobby:
