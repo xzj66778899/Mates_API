@@ -15,7 +15,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     gender_id = db.Column(db.Integer, db.ForeignKey('genders.id'))
-    gender = db.relationship('Gender', back_populates = 'users', cascade = 'all, delete') 
+    gender = db.relationship('Gender', back_populates = 'users') 
 
     users_have_hobbies = db.relationship('User_has_hobby')
 

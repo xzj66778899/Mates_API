@@ -10,7 +10,8 @@
 6. [R6](#r6)
 7. [R7](#r7)
 8. [R8](#r8)
-
+9. [R9](#r9)
+10. [R10](#r10)
 
 ## __R1__ 
 <a name="r1"></a>
@@ -63,8 +64,11 @@ It's a Flask extension that support JSON web tokens that commenly used for authe
 ## __R8__ 
 <a name="r8"></a>
 __Model user__: <br>
-This model contains users information and is the parent model of 'gender'. <br>
-It also has 'many to many' relationships with 'hobby' model that bridged by the 'user_has_hobby'connecting model.
+This model represents the table users in the database, which has a primary key 'id', columns are 'first_name', 'last_name', 'password', 'email', 'is_admin',and a foreign key 'gender_id'. This model also links to 'users_have_hobbies' so we set a db.relationship on it.
+
+The 'email' works as an unique element to identify a user, so it set to be 'unique = True'.<br>
+
+The'is_admin' set as 'default = False' means that the user normally registered as non-admin, but this function need to be improved later to prevent user registered as an admin wuthout authorization.
 
 ```PYTHON
 class User(db.Model):
@@ -79,7 +83,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     gender_id = db.Column(db.Integer, db.ForeignKey('genders.id'))
-    gender = db.relationship('Gender', back_populates = 'users', cascade = 'all, delete') 
+    gender = db.relationship('Gender', back_populates = 'users') 
 
     users_have_hobbies = db.relationship('User_has_hobby')
 
@@ -94,7 +98,9 @@ class UserSchema(ma.Schema):
 ```
 
 __Model gender__: <br>
-This model contains gender information and it's a child model of 'user' (one to many).
+This model represents table 'genders' in the database that has a primary key 'id' and column 'name'. It has been set relationship to 'users' model.
+
+The 'name' column must be unique to prevent duplicated columns.
 
 ```PYTHON
 class Gender(db.Model):
@@ -105,7 +111,7 @@ class Gender(db.Model):
     name = db.Column(db.String, nullable = False, unique=True)
    
 
-    users = db.relationship('User', back_populates = 'gender', cascade = 'all,delete')
+    users = db.relationship('User', back_populates = 'gender')
 
 
 class GenderSchema(ma.Schema):
@@ -114,7 +120,10 @@ class GenderSchema(ma.Schema):
 ```
 
 __Model hobby__: <br>
-This model contains hobby information and has 'many to many' relationships with 'user' model that bridged by the 'user_has_hobby'connecting model.
+This model represents table 'hobbies' in the database that has a primary key 'id' and column 'name'. This model also links to 'users_have_hobbies', and if the 'hobby' is deleted, the 'user_has_hobby' also be deleted so it set a "csscade = 'all,delete'" on it.
+
+The 'name' column must be unique to prevent duplicated columns.
+
 
 ```PYTHON
 class Hobby(db.Model):
@@ -132,7 +141,7 @@ class HobbySchema(ma.Schema):
 ```
 
 __Model user_has_hobby__: <br>
-This model is a connecting model that bridge the 'user' and 'hobby' model that have a 'many to many' relationship.
+This model represents table 'users_have_hobbies' in the database that has a primary key 'id' and two foreign keys 'user_id' and 'hobby_id'.
 
 ```PYTHON
 class User_has_hobby(db.Model):
@@ -156,3 +165,12 @@ class User_has_hobbySchema(ma.Schema):
 ```
 
 
+## __R9__ 
+<a name="r9"></a>
+The __'user'__ model contains users information and is the child object of __'gender'__, because one user only has one gender while one gender can belong to multipul users, which has a 'one to many' relationship between them. <br>
+
+The __'user'__ model also has a relationship with __'hobby'__ model that one user can have many hobbies and one hobby can belong to multipul users. <br>
+This 'many to many' relationship is bridged by the __'user_has_hobby'__ connecting model which only contains the primary keys of both parties and store the relations of them. If one of the party is deleted, the connecting object will be deleted as well by cascad deleting.
+
+## __R10__ 
+<a name="r10"></a>
