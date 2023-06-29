@@ -7,6 +7,7 @@
 
 ## Installation and Setup<br>
 
+
 ## Table of Contents
 
 - [R1](#r1)
@@ -193,4 +194,4 @@ The planning process including:<br>
 
 For the project management tool, Trello is used to manage the process. 
 [click here for Trello](https://trello.com/invite/b/Cc3QyvmU/ATTIe97faff0535786514465d41b90046bff49B86687/assignment-t2a2)<br>
-The scope was defined at the beginning of the project, then in the middle of the project I decided to add more features on it, which formed an Agile method. 
+The scope was defined at the beginning of the project, then in the middle of the project I decided to add more features on it, which formed an Agile method. As the main features still function, the added features can be worked independently. For example, if there are two developers, one works on the main features to ensure project deliverable and the other can work on a seperate branch.
