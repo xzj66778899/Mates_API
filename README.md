@@ -27,7 +27,9 @@ flask db seed
 # Run the application
 flask run
 ```
+Then you can open URL http://127.0.0.1:5000/ to use the application
 ***
+
 ## Table of Contents
 
 - [R1](#r1)
